@@ -5,10 +5,17 @@ list=()
 #for i in "${ext[@]}";do eval $i;done
 
 
-function create_section(){
-    text="<section id=\"$name\">
-            <h2 class=\"section-title\">$desc</h2>
-        </section>"
+#1-path;2-name;3-date;4-path_from_disk
+function create_element(){
+    text="<div class=\"photo file-container\">
+                    <img src=\"$1\" alt=\"$1\"/>
+                    <p class=\"file-name\">$2</p>
+                    <p class=\"modify-date\">$3</p>
+                    <p class=\"file-path\">$1</p>
+                    <a href=\"$4\"><img src=\"sid-view.png\" class=\"eye\"/></a>
+                </div>"
+    retval=$text
+    echo $retval
 }
 
 x="$(echo $1 | head -c 1)"
@@ -58,7 +65,8 @@ else
         do
             time=`ls --full-time $j | grep -oE "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"`
             path=`pwd`/$j
-            echo $path
+            file_name=`echo $j | cut -d '.' -f1 | rev | cut -d '/' -f1 | rev`
+            code=$(create_element $j $file_name $time $path)
         done
         echo $i, ${temp_files[@]}
     done
