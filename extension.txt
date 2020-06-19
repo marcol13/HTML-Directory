@@ -1,0 +1,3 @@
+images Obrazy "jpg","gif","png","jpeg","tiff","apng","bmp","ico","cur","jfif","pjpeg","pjp","svg","tif","webp"
+music Muzyka "mp3","ogg","wav"
+documents Dokumenty "pdf","doc","odt"
