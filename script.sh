@@ -6,12 +6,12 @@ list=()
 
 #1-path;2-name;3-date;4-hour;5-path_from_disk
 function create_element(){
-    text="<div class=\"photo file-container\">
-                    <img src=\"\" alt=\"$1\"/>
+    text="<div class=\"file file-container\">
+                    <div class=\"thumb-container\"><img src=\"img/documents.png\" alt=\"$1\"/></div>
                     <p class=\"file-name\">$2</p>
                     <p class=\"modify-date\">$3 $4</p>
                     <p class=\"file-path\">$1</p>
-                    <a href=\"$5\"><img src=\"sid-view.png\" class=\"eye\"/></a>
+                    <a href=\"$5\"><img src=\"img/sid-view.png\" class=\"eye\"/></a>
                 </div>"
     retval=$text
     echo $retval
@@ -20,11 +20,11 @@ function create_element(){
 #1-path;2-name;3-date;4-hour;5-path_from_disk
 function create_img_element(){
     text="<div class=\"photo photo-container\">
-                    <img src=\"$1\" alt=\"$1\"/>
+                    <div class=\"thumb-container\"><img src=\"$1\" alt=\"$1\"/></div>
                     <p class=\"file-name\">$2</p>
                     <p class=\"modify-date\">$3 $4</p>
                     <p class=\"file-path\">$1</p>
-                    <a href=\"$5\"><img src=\"sid-view.png\" class=\"eye\"/></a>
+                    <a href=\"$5\"><img src=\"img/sid-view.png\" class=\"eye\"/></a>
                 </div>"
     retval=$text
     echo $retval
