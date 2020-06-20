@@ -1,8 +1,5 @@
 #!/bin/bash
 list=()
-#section=("images","music","documents")
-#ext=('d1=("jpg" "gif" "png" "jpeg" "tiff" "apng" "bmp" "ico" "cur" "jfif" "pjpeg" "pjp" "svg" "tif" "webp")' 'd2=("mp3" "ogg" "wav")' 'd3=("pdf" "doc" "odt")')
-#for i in "${ext[@]}";do eval $i;done
 
 #1-path;2-name;3-date;4-hour;5-path_from_disk
 function create_element(){
@@ -44,7 +41,6 @@ then
 else
     for i in $@
     do
-        #echo "./$i" 
         if [ -a "./$i" ]
         then
             list+=(`find "./$i" -type f | grep '^\.\/.*\.\S*$' | sed -E "s/(\.\/)+//"`)
@@ -59,7 +55,6 @@ else
     description=( `awk '{print $2}' extension.txt` )
     ext=( `awk '{print $3}' extension.txt` )
     code=""
-    #sed -E "s/,/ /g"
     n=${#name[@]}
     touch "index.html"
     :>index.html
@@ -105,7 +100,6 @@ else
                 </div>"
         fi
         temp_arr=(`echo ${ext[$i]} | sed -E "s/,/ /g" | sed -E "s/\"//g"`)
-        #for j in ${list[@]}; do echo $j;done;
         temp_files=()
         for j in ${list[@]}
         do
@@ -114,7 +108,6 @@ else
                 temp_files+=(`echo $j | grep -E "^.*\.$k$"`)
             done
         done
-        #temp_files=(`for j in ${list[@]}; do echo $j | grep -E "^.*\.$temp_arr$";done`)
         for j in ${temp_files[@]}
         do
             time=`ls --full-time $j | grep -oE "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"`
@@ -128,7 +121,6 @@ else
             fi
         done
         code+="</section>"
-        #echo $i, ${temp_files[@]}
     done
     echo $code >> index.html
     echo "</div>
@@ -136,4 +128,3 @@ else
 </html>" >> index.html
 fi
 
-#echo $code
