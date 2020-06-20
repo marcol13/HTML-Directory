@@ -69,17 +69,24 @@ body{
             text-align: center;
         }
 
-        div.file-container{
-            display: flex;
+        div.photo-container{
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 0.5fr;
             align-items: center;
-            justify-content: space-between;
             width: 100vw;
             padding: 15px 15px;
             border-bottom: 2px grey dashed;
             p{
                 padding: 0 15px;
+                word-break: break-all;
+                text-align: center;
+                
+            }
+            p:not(.info){
+                width: 100%;
             }
         }
+
 
         div.photo{
             img{
@@ -91,6 +98,10 @@ body{
 
         p.photo-size{
             width: 320px;
+        }
+
+        p.link-img{
+            width: 100px;
         }
     }
 }
