@@ -27,12 +27,48 @@ function create_img_element(){
     echo $retval
 }
 
+function create_menu(){
+    text="<div class=\"menu\">"
+    for i in $(seq 0 $(($n-1)))
+    do
+        text+="<p class=\"menu-item\"><a href=\"#${name[i]}\">${description[i]}</a></p>"
+    done
+    text+="        </div>
+    </div>
+    <div class=\"content\">"
+    retval=$text
+    echo $retval
+}
+
+function add_category(){
+    id_name=( `awk '{print $1}' extension.txt` )
+    if [[ ! -z $2 ]] && [[ ! -z $3 ]] && [[ ! "${id_name[*]}" == *"$2"* ]] 
+    then
+        ext="$2 $3"
+        shift 3
+        for i in $@
+        do
+            ext+=" \"$i\","
+            shift
+        done
+        echo $ext
+    else
+        echo "-1"
+    fi
+}
+
 x="$(echo $1 | head -c 1)"
 if [[ "$x" == "-" ]]
 then
     case "$1" in
         "-h") echo "tu będzie pomoc";;
-        "-a") echo "tu będzie można dodać kategorię";;
+        "-a") result=$(add_category $@)
+                if [[ "$result" == "-1" ]]
+                then
+                    echo "Nieprawidłowe dane"
+                else
+                    echo -ne "\n${result::-1}" >> extension.txt
+                fi;;
         "-d") echo "tu będzie można usunąć kategorię";;
         "--ae") echo "tu będzie można dodać rozszerzenie";;
         "--de") echo "tu będzie można usunąć rozszerzenie";;
@@ -70,13 +106,8 @@ else
 <body>
     <div class=\"header\">
         <h1 class=\"header-title\"><span class=\"blue\">Moje</span> <span class=\"yellow\">pliki</span></h1>
-        <div class=\"menu\">
-            <p class=\"menu-item\"><a href=\"#images\">Zdjęcia</a></p>
-            <p class=\"menu-item\"><a href=\"#music\">Muzyka</a></p>
-            <p class=\"menu-item\"><a href=\"#docs\">Dokumenty</a></p>
-        </div>
-    </div>
-    <div class=\"content\">" >> index.html
+        " >> index.html
+    echo $(create_menu) >> index.html
     for i in $(seq 0 $(($n-1)))
     do
         code+="<section id=\"${name[$i]}\">
