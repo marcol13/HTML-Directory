@@ -68,6 +68,13 @@ body{
         flex-direction: column;
         section{
             text-align: center;
+            &::before{
+                content: '';
+                display: block;
+                height: 125px;
+                margin-top: -75px;
+                visibility: hidden;;
+            }
         }
 
         h2{
