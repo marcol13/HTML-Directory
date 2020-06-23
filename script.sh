@@ -78,8 +78,9 @@ function delete_category(){
     fi
 }
 
+
 x="$(echo $1 | head -c 1)"
-if [[ "$x" == "-" ]]
+if [[ "$x" == "-" ]] && [[ "$1" != "--desc" ]]  && [[ "$1" != "--asc" ]]
 then
     case "$1" in
         "-h") echo "tu będzie pomoc";;
@@ -101,22 +102,45 @@ then
                     sed -i "${result}d" extension.txt
                     perl -pi -e 'chomp if eof' extension.txt
                 fi;;
-        "--ae") echo "tu będzie można dodać rozszerzenie";;
-        "--de") echo "tu będzie można usunąć rozszerzenie";;
+        "--desc") echo "tu będzie można dodać rozszerzenie";;
+        "--asc") echo "tu będzie można usunąć rozszerzenie";;
         *) echo "Nie ma takiej flagi";;
     esac
 else
+    flag=0
+    is_flag=false
+    if [[ "$1" == "--desc" ]]
+    then
+        flag=1
+        is_flag=true
+    elif [[ "$1" == "--asc" ]]
+    then
+        flag=2
+        is_flag=true
+    fi
     for i in $@
     do
-        if [ -a "./$i" ]
+        if [[ "$is_flag" == true ]]
         then
-            list+=(`find "./$i" -type f | grep '^\.\/.*\.\S*$' | sed -E "s/(\.\/)+//"`)
+            is_flag=false
+            continue
         else
-            echo "$i - nie ma takiego pliku/katalogu"
+            if [ -a "./$i" ]
+            then
+                list+=(`find "./$i" -type f | grep '^\.\/.*\.\S*$' | sed -E "s/(\.\/)+//"`)
+            else
+                echo "$i - nie ma takiego pliku/katalogu"
+            fi
         fi
     done
     list=( `for i in ${list[@]}; do echo $i; done | sort -u` )
-
+    if [[ "$flag" == "1" ]]
+    then
+        list=( `for i in ${list[@]}; do echo $i ; done | sort -r` )
+    elif [[ "$flag" == "2" ]]
+    then
+        list=( `for i in ${list[@]}; do echo $i ; done | sort` )
+    fi
     
     name=( `awk '{print $1}' extension.txt` )
     description=( `awk '{print $2}' extension.txt` )
