@@ -78,32 +78,44 @@ function delete_category(){
     fi
 }
 
+function display_help(){
+    echo "Pomoc dla skryptu $0:\n\nZałożenia:\n
+    \tSkrypt wyświetla podane pliki w formie strony internetowej. Dostępny jest \nw niej podgląd nazwy pliku, daty modyfikacji, ścieżki do pliku, a także odnośnik.\nJeżeli używamy skryptu bez flagi lub z flagami sortującymi to jako argumenty podajemy katalogi lub pliki które mają być uwzględnione przy tworzeniu strony.\nDostępne flagi:\n
+    \t-h - pomoc - wyświetla pomoc dla polecenia\n
+    \t-a - dodaje nową kategorię; przyjmuje argumenty: nazwa_sekcji opis rozszerze-\n\tnia; nie można dodać kategorii, której nazwa sekcji już istnieje\n
+    \t\tPrzykład użycia: \"./script.sh -a text Tekstowe txt doc docx\"\n
+    \t-d - usuwa kategorię po nazwie sekcji; nie można usunąć sekcji:\n\t${fixed_categories[*]}\n
+    \t\tPrzykład użycia: \"./script.sh -a\"\n
+    \t--asc - sortuje wpisy rosnąco po ścieżce do pliku\n
+    \t--desc - sortuje wpisy malejąco po ścieżce do pliku\nWszystkie nazwy:\n
+    \t ${name[*]}\nWszystkie informacje o rozszerzeniach i nazwach umieszczone są w pliku extension.txt"
+}
+
 
 x="$(echo $1 | head -c 1)"
 if [[ "$x" == "-" ]] && [[ "$1" != "--desc" ]]  && [[ "$1" != "--asc" ]]
 then
     case "$1" in
-        "-h") echo "tu będzie pomoc";;
+        "-h") name=( `awk '{print $1}' extension.txt` )
+                echo -e $(display_help $@);;
         "-a") result=$(add_category $@)
                 if [[ "$result" == "-1" ]]
                 then
-                    echo "Nieprawidłowe dane"
+                    echo -e "Nieprawidłowe dane\nZobacz pomoc używając flagi -h"
                 else
                     echo -ne "\n${result::-1}" >> extension.txt
                 fi;;
         "-d") result=$(delete_category $2)
                 if [[ "$result" == "-2" ]]
                 then
-                    echo "Nie można usunąć tej kategorii"
+                    echo -e "Nie można usunąć tej kategorii\nZobacz pomoc używając flagi -h"
                 elif [[ "$result" == "-1" ]]
                 then
-                    echo "Nie ma takiej kategorii"
+                    echo -e "Nie ma takiej kategorii\nZobacz pomoc używając flagi -h"
                 else
                     sed -i "${result}d" extension.txt
                     perl -pi -e 'chomp if eof' extension.txt
                 fi;;
-        "--desc") echo "tu będzie można dodać rozszerzenie";;
-        "--asc") echo "tu będzie można usunąć rozszerzenie";;
         *) echo "Nie ma takiej flagi";;
     esac
 else
@@ -167,24 +179,6 @@ else
     do
         code+="<section id=\"${name[$i]}\">
                 <h2 class=\"section-title\">${description[$i]}</h2>"
-        if [[ "${name[$i]}" == "images" ]]
-        then
-            code+="<div class=\"info-section photo-container\">
-                    <p class=\"info photo-size\">Obraz</p>
-                    <p class=\"info\">Nazwa pliku</p>
-                    <p class=\"info\">Data modyfikacji</p>
-                    <p class=\"info\">Ścieżka do pliku</p>
-                    <p class=\"info link-img\">Odnośnik</p>
-                </div>"
-        else
-            code+="<div class=\"info-section file-container\">
-                    <p class=\"info\">Plik</p>
-                    <p class=\"info\">Nazwa pliku</p>
-                    <p class=\"info\">Data modyfikacji</p>
-                    <p class=\"info\">Ścieżka do pliku</p>
-                    <p class=\"info link-img\">Odnośnik</p>
-                </div>"
-        fi
         temp_arr=(`echo ${ext[$i]} | sed -E "s/,/ /g" | sed -E "s/\"//g"`)
         temp_files=()
         for j in ${list[@]}
@@ -194,18 +188,41 @@ else
                 temp_files+=(`echo $j | grep -E "^.*\.$k$"`)
             done
         done
-        for j in ${temp_files[@]}
-        do
-            time=`ls --full-time $j | grep -oE "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"`
-            path=`pwd`/$j
-            file_name=`echo $j | cut -d '.' -f1 | rev | cut -d '/' -f1 | rev`
+        if [[ "${#temp_files[@]}" == "0" ]]
+        then
+            code+="<p class=\"empty_info\">Sekcja ${description[$i]} jest pusta</p>"
+        else
             if [[ "${name[$i]}" == "images" ]]
             then
-                code+=$(create_img_element $j $file_name ${time[@]} $path)
+                code+="<div class=\"info-section photo-container\">
+                        <p class=\"info photo-size\">Obraz</p>
+                        <p class=\"info\">Nazwa pliku</p>
+                        <p class=\"info\">Data modyfikacji</p>
+                        <p class=\"info\">Ścieżka do pliku</p>
+                        <p class=\"info link-img\">Odnośnik</p>
+                    </div>"
             else
-                code+=$(create_element $j $file_name ${time[@]} $path)
+                code+="<div class=\"info-section file-container\">
+                        <p class=\"info\">Plik</p>
+                        <p class=\"info\">Nazwa pliku</p>
+                        <p class=\"info\">Data modyfikacji</p>
+                        <p class=\"info\">Ścieżka do pliku</p>
+                        <p class=\"info link-img\">Odnośnik</p>
+                    </div>"
             fi
-        done
+            for j in ${temp_files[@]}
+            do
+                time=`ls --full-time $j | grep -oE "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"`
+                path=`pwd`/$j
+                file_name=`echo $j | cut -d '.' -f1 | rev | cut -d '/' -f1 | rev`
+                if [[ "${name[$i]}" == "images" ]]
+                then
+                    code+=$(create_img_element $j $file_name ${time[@]} $path)
+                else
+                    code+=$(create_element $j $file_name ${time[@]} $path)
+                fi
+            done
+        fi
         code+="</section>"
     done
     echo $code >> index.html
