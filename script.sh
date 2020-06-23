@@ -1,5 +1,6 @@
 #!/bin/bash
 list=()
+fixed_categories=("images","music","documents")
 
 #1-path;2-name;3-date;4-hour;5-path_from_disk
 function create_element(){
@@ -44,16 +45,36 @@ function add_category(){
     id_name=( `awk '{print $1}' extension.txt` )
     if [[ ! -z $2 ]] && [[ ! -z $3 ]] && [[ ! "${id_name[*]}" == *"$2"* ]] 
     then
-        ext="$2 $3"
+        ext="$2 $3 "
         shift 3
         for i in $@
         do
-            ext+=" \"$i\","
+            ext+="\"$i\","
             shift
         done
         echo $ext
     else
         echo "-1"
+    fi
+}
+
+#1-category_name
+function delete_category(){
+    if [[ "${fixed_categories[@]}" =~ "$1" ]]
+    then
+        echo -2
+    else
+        id_name=( `awk '{print $1}' extension.txt` )
+        local line_id=-1
+        for i in $(seq 0 $((${#id_name}-1)))
+        do
+            if [[ "${id_name[$i]}" == "$1" ]]
+            then
+                line_id=$(($i+1))
+                break
+            fi
+        done
+        echo $line_id
     fi
 }
 
@@ -69,7 +90,17 @@ then
                 else
                     echo -ne "\n${result::-1}" >> extension.txt
                 fi;;
-        "-d") echo "tu będzie można usunąć kategorię";;
+        "-d") result=$(delete_category $2)
+                if [[ "$result" == "-2" ]]
+                then
+                    echo "Nie można usunąć tej kategorii"
+                elif [[ "$result" == "-1" ]]
+                then
+                    echo "Nie ma takiej kategorii"
+                else
+                    sed -i "${result}d" extension.txt
+                    perl -pi -e 'chomp if eof' extension.txt
+                fi;;
         "--ae") echo "tu będzie można dodać rozszerzenie";;
         "--de") echo "tu będzie można usunąć rozszerzenie";;
         *) echo "Nie ma takiej flagi";;
