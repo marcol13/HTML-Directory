@@ -229,5 +229,6 @@ else
     echo "</div>
 </body>
 </html>" >> index.html
+firefox `pwd`/"index.html"
 fi
 
