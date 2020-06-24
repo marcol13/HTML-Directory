@@ -24,8 +24,7 @@ function create_img_element(){
                     <p class=\"file-path\">$1</p>
                     <a href=\"$5\"><img src=\"img/sid-view.png\" class=\"eye\"/></a>
                 </div>"
-    retval=$text
-    echo $retval
+    echo $text
 }
 
 function create_menu(){
@@ -37,8 +36,7 @@ function create_menu(){
     text+="        </div>
     </div>
     <div class=\"content\">"
-    retval=$text
-    echo $retval
+    echo $text
 }
 
 function add_category(){
