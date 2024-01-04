@@ -27,24 +27,44 @@ Thank to this, you can browse and preview your files in much nicer design.
 
 ## Demo
 
-### Main page
+### Website
 
 ![image](https://github.com/marcol13/HTML-Directory/assets/56632321/dcd38eb1-a3c9-42f3-b133-14aba011b8c7)
 
 ### Functionality
 
+[Screencast from 04.01.2024 21:07:19.webm](https://github.com/marcol13/HTML-Directory/assets/56632321/3589546f-e6b1-4d01-9f3a-cb4c4d8edc02)
+
 
 ## Technologies Used
 <p>
-  <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img alt="Shell Script" src="https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white" />
+  <img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
   <img alt="SASS" src="https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&logo=sass&logoColor=white" />
 </p>
 
 
 ## Getting Started
 
-1. Clone the repository: `git clone https://github.com/marcol13/HTML-Directory`
-2. Run `script.sh` on your Linux computer: `./script.sh <options>`
-3. Choose option and flags accorgin to your needs. Check out [help](#help) section or just write `./script.sh -h`!
+1. You need to have Linux OS.
+2. Clone the repository: `git clone https://github.com/marcol13/HTML-Directory`
+3. Run `script.sh` on your Linux computer: `./script.sh <options>`
+4. Choose option and flags accorgin to your needs. Check out [help](#help) section or just write `./script.sh -h`!
 
 ## Help
+
+If you want to run script with default config (showing files only from `images`, `music` and `documents` directories) you need to execute: 
+
+```
+./script.sh <path>
+```
+
+If you want to add other directories, check below section.
+
+### Flags
+
+- `-h` - show help message for the script
+- `-a` - creates new category taking as argument: `<directory> <name> <extensions>`. Example: `./script.sh -a text Tekstowe txt doc docx`. You can also edit extension.txt file to configure your own categories.
+- `-d` - deletes category taking as argument: `<directory>`. Example: `./script.sh -d text`
+- `--asc` - sort files in ascending order by file name. Example: `./script.sh /home/Desktop --asc`
+- `--desc` - sort files in descending order by file name. Example: `./script.sh /home/Desktop --desc`
